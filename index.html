@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #particle-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+ .particle {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      opacity: 0.5;
+    }
+
+ .clicked-image {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      opacity: 1;
+      transition: opacity 3s ease;
+    }
+
+ .meteor {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      opacity: 0.7;
+      background-size: cover;
+    }
+  </style>
+</head>
+
+<body onclick="createClickedImage(event)">
+  <div id="particle-container"></div>
+
+  <script>
+    // 5 个不同的图片 URL
+    const imageUrls = [
+      "https://s2.loli.net/2024/11/07/uoae386lkv4Wtis.png",
+      "https://s2.loli.net/2024/11/07/GiZ7t2kJua4BIPQ.png",
+      "https://s2.loli.net/2024/11/07/9NrWx4eTds7c25R.png",
+      "https://s2.loli.net/2024/11/07/f2sNMyTHx1rd6eY.png",
+      "https://s2.loli.net/2024/11/07/zDucLE7jvnS4Xbt.png"
+    ];
+
+    // 3 张流星图片的 URL
+    const meteorImageUrls = [
+      "https://s2.loli.net/2024/11/07/GSzmXPwIq4dxL7r.png",
+      "https://s2.loli.net/2024/11/07/AQ7Ko6H3nV12UkB.png",
+      "https://s2.loli.net/2024/11/07/akKX2UVEQbvizjf.png"
+    ];
+
+    // 创建带有图片的粒子
+    function createParticles() {
+      const container = document.getElementById('particle-container');
+      for (let i = 0; i < 100; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+
+        // 随机选择一个图片
+        const randomImageUrl = imageUrls[Math.floor(Math.random() * imageUrls.length)];
+
+        particle.style.backgroundImage = `url(${randomImageUrl})`;
+        particle.style.backgroundSize = 'cover';
+        particle.style.left = Math.random() * window.innerWidth + 'px';
+        particle.style.top = Math.random() * window.innerHeight + 'px';
+        container.appendChild(particle);
+      }
+    }
+
+    // 在点击处创建指定图片
+    function createClickedImage(event) {
+      const clickedImage = document.createElement('div');
+      clickedImage.className = 'clicked-image';
+      clickedImage.style.backgroundImage = 'url(https://s2.loli.net/2024/11/07/UhjZntBMKNCH8er.png)';  // 指定要显示的图片
+      clickedImage.style.left = event.clientX - 50 + 'px';  // 以点击位置为中心
+      clickedImage.style.top = event.clientY - 50 + 'px';
+
+      document.body.appendChild(clickedImage);
+
+      setTimeout(() => {
+        clickedImage.style.opacity = 0;  // 3 秒后逐渐淡化消失
+      }, 3000);
+    }
+
+    // 创建流星效果
+    function createMeteors() {
+      setInterval(() => {
+        for (let i = 0; i < 3; i++) {
+          const meteor = document.createElement('div');
+          meteor.className ='meteor';
+          const randomMeteorUrl = meteorImageUrls[Math.floor(Math.random() * meteorImageUrls.length)];
+          meteor.style.backgroundImage = `url(${randomMeteorUrl})`;
+          const randomTop = Math.random() * 50;  // 左上角随机的顶部位置
+          const randomLeft = Math.random() * 50;  // 左上角随机的左侧位置
+          meteor.style.left = randomLeft + 'px';
+          meteor.style.top = randomTop + 'px';
+          document.body.appendChild(meteor);
+
+          // 流星移动的动画
+          const animation = meteor.animate([
+            { transform: `translate(${randomLeft}px, ${randomTop}px)` },
+            { transform: `translate(${window.innerWidth}px, ${window.innerHeight}px)` }
+          ], {
+            duration: 5000,  // 飞行时间
+            easing: 'linear',
+            fill: 'forwards'
+          });
+
+          // 当流星到达边缘时删除
+          animation.onfinish = () => {
+            document.body.removeChild(meteor);
+          };
+        }
+      }, 800);  // 每隔 0.8 秒创建一批流星
+    }
+
+    // 让粒子移动
+    function moveParticles() {
+      const particles = document.getElementsByClassName('particle');
+      for (let particle of particles) {
+        const x = particle.offsetLeft + (Math.random() - 0.5) * 2;
+        const y = particle.offsetTop + (Math.random() - 0.5) * 2;
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+      }
+    }
+
+    createParticles();
+    createMeteors();
+    setInterval(moveParticles, 30);
+  </script>
+</body>
+
+</html>
